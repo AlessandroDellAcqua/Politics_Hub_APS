@@ -93,8 +93,17 @@ nome (tracciabilità individuale, come raccomandato dall'architettura §10).
 Nota: `admin/` è pubblico ma inerte senza token, non è indicizzato (robots + noindex) e può
 essere spostato in un repository separato in futuro senza cambiare nulla del sito pubblico.
 
+## Moduli e biglietti QR (`google-apps-script/` + `docs/SETUP-MODULI.md`)
+
+Newsletter e iscrizione eventi salvano i dati in un **Google Sheet sul Drive dell'associazione**
+tramite Google Apps Script; un trigger che gira ogni minuto genera i **biglietti QR** e li invia
+via email (consegna tipica: 1–2 minuti). Iscrizione eventi: fino a **2 partecipanti** (nome +
+cognome ciascuno) con un'unica email; capienza controllata in modo atomico; newsletter: solo email.
+
+Setup completo in **docs/SETUP-MODULI.md**. Dopo il deploy, incolla l'URL dell'app web in
+`assets/js/config.js` — finché è vuoto i moduli mostrano il fallback via email.
+
 ## Prossimi passi (vedi politics_hub_zero_cost_architecture.md)
 
-- Fase 2: moduli newsletter/iscrizione eventi con Google Apps Script + Google Sheets
-- Fase 3: email di conferma con QR
-- Fase 5: app di check-in iOS/Android
+- Fase 5: app di check-in iOS/Android (il QR contiene già un codice firmato, verificabile con `verifyQrId`)
+- Fase 6: biglietti Apple Wallet

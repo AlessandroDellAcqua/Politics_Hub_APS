@@ -14,11 +14,14 @@
     <div class="newsletter-box">
       <h3>The Politics Hub newsletter</h3>
       <p>Events, articles and news from the association, straight to your inbox.</p>
-      <form action="mailto:info@politicshub.it?subject=Politics%20News%20newsletter%20subscription" method="get">
-        <input type="email" name="email" placeholder="Your email" required>
+      <form id="ph-newsletter-form" class="ph-form" novalidate>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="email" name="email" placeholder="Your email" required autocomplete="email">
         <button class="btn btn-primary" type="submit">Subscribe</button>
+        <label class="check-row"><input type="checkbox" name="consent" required>
+          <span>I accept the terms and conditions of the <a href="privacy-newsletter.html" target="_blank">Newsletter Privacy Policy</a>. *</span></label>
+        <div class="form-status" aria-live="polite"></div>
       </form>
-      <p class="consent">By submitting the request you accept the terms and conditions of the <a href="privacy-newsletter.html">Newsletter Privacy Policy</a>. The automatic form will be activated with the new subscription system; in the meantime the request is sent via email.</p>
     </div>
 
     <div class="section-head mt-4">

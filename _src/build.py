@@ -99,6 +99,10 @@ PAGES = {
                               "I giovani guardano all'Europa: iniziative per coinvolgere i giovani europei in politica e società.",
                               "Young people look to Europe: initiatives to involve young Europeans in politics and society.",
                               "direzione-europa"),
+    "iscrizione":            ("Iscrizione all'evento", "Event registration",
+                              "Iscriviti al prossimo evento di Politics Hub: fino a 2 partecipanti, biglietti con QR code via email.",
+                              "Register for the next Politics Hub event: up to 2 participants, QR code tickets by email.",
+                              "eventi"),
     "articolo":              ("Articolo", "Article",
                               "Un articolo de Il Poligono, il progetto editoriale di Politics Hub.",
                               "An article from Il Poligono, the editorial project of Politics Hub.",
@@ -299,8 +303,10 @@ def page_html(lang, slug, body):
 {body}
 </main>
 {footer_html(lang)}
+<script src="../assets/js/config.js"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/content.js"></script>
+<script src="../assets/js/forms.js"></script>
 </body>
 </html>'''
 

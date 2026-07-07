@@ -78,8 +78,11 @@
         if (e.date) metas += '<span class="ev-pill">📅 ' + esc(fmtDate(e.date)) + (e.time ? ' · ' + esc(e.time) : '') + '</span>';
         if (e.location) metas += '<span class="ev-pill">📍 ' + esc(e.location) + '</span>';
         if (e.max_places) metas += '<span class="ev-pill">👥 ' + esc(e.max_places) + ' ' + esc(T.places).toLowerCase() + '</span>';
-        var btn = e.registration_url
-          ? '<a class="btn btn-primary" href="' + esc(e.registration_url) + '" target="_blank" rel="noopener">' + esc(T.register) + '</a>' : '';
+        var regHref = e.registration_url
+          || ((window.PH_CONFIG && window.PH_CONFIG.FORMS_ENDPOINT) ? 'iscrizione.html' : '');
+        var extAttr = e.registration_url ? ' target="_blank" rel="noopener"' : '';
+        var btn = regHref
+          ? '<a class="btn btn-primary" href="' + esc(regHref) + '"' + extAttr + '>' + esc(T.register) + '</a>' : '';
         var body =
           '<div class="ev-body">' +
             '<span class="meta">' + esc(pick(e, 'kicker') || 'Politics Hub') + '</span>' +

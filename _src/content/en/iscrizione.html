@@ -1,0 +1,52 @@
+<section class="page-hero">
+  <div class="container">
+    <h1>Event registration</h1>
+    <p>Up to 2 participants per registration. Tickets with QR codes arrive by email within a few minutes.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container" style="max-width:760px">
+    <div id="ph-reg-event">
+      <noscript><p>Enable JavaScript to register for the event.</p></noscript>
+    </div>
+
+    <form id="ph-reg-form" class="ph-form hide" novalidate>
+      <input type="hidden" name="event_id" value="">
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="reg-guests">
+        <h3>Participant 1</h3>
+        <div class="form-row">
+          <div><label for="reg-n1">First name *</label><input type="text" id="reg-n1" name="nome1" required autocomplete="given-name"></div>
+          <div><label for="reg-c1">Surname *</label><input type="text" id="reg-c1" name="cognome1" required autocomplete="family-name"></div>
+        </div>
+      </div>
+
+      <label class="check-row" style="margin-top:20px">
+        <input type="checkbox" id="reg-add-guest2">
+        <span>Add a second participant (max 2 tickets per registration)</span>
+      </label>
+
+      <div class="reg-guests hide" id="reg-guest2">
+        <h3>Participant 2</h3>
+        <div class="form-row">
+          <div><label for="reg-n2">First name</label><input type="text" id="reg-n2" name="nome2"></div>
+          <div><label for="reg-c2">Surname</label><input type="text" id="reg-c2" name="cognome2"></div>
+        </div>
+      </div>
+
+      <label for="reg-email">Email (tickets are sent here) *</label>
+      <input type="email" id="reg-email" name="email" required autocomplete="email">
+
+      <label class="check-row">
+        <input type="checkbox" name="consent" required>
+        <span>I have read and accept the <a href="privacy-eventi.html" target="_blank">Events Privacy Policy</a>. *</span>
+      </label>
+
+      <button class="btn btn-primary" type="submit">Register</button>
+    </form>
+
+    <div id="ph-reg-status" class="form-status" aria-live="polite"></div>
+  </div>
+</section>

@@ -450,6 +450,30 @@ a { color: inherit; }
   .page-hero { padding: 118px 0 52px; }
 }
 
+/* ---------- Moduli (newsletter, iscrizione eventi) ---------- */
+
+.hide { display: none !important; }
+.ph-form label { display: block; font-size: 13px; font-weight: 500; letter-spacing: .4px; color: var(--muted); margin: 16px 0 6px; }
+.ph-form input[type="text"], .ph-form input[type="email"] {
+  width: 100%; padding: 13px 18px; border: 1px solid var(--line); border-radius: 12px;
+  font: inherit; font-size: 15px; background: #fff;
+}
+.ph-form input:focus { outline: 2px solid var(--sky); border-color: var(--sky); }
+.ph-form .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 18px; }
+.check-row { display: flex; align-items: flex-start; gap: 10px; margin: 18px 0 6px; font-size: 14px; color: var(--muted); }
+.check-row input { margin-top: 4px; width: 16px; height: 16px; accent-color: var(--blue); }
+.check-row a { color: var(--blue-deep); }
+.form-status { display: none; margin-top: 16px; padding: 13px 16px; border-radius: 12px; font-size: 14.5px; }
+.form-status.show { display: block; }
+.form-status.ok { background: #e8f6ee; border: 1px solid #bfe5cf; color: #1a7f4e; }
+.form-status.err { background: #fdeceb; border: 1px solid #f3c3bf; color: #b3362c; }
+.form-status.info { background: var(--paper-2); border: 1px solid var(--line); color: var(--muted); }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.ph-form button[type="submit"] { cursor: pointer; border: 0; font-family: var(--sans); margin-top: 18px; }
+.reg-guests { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px 26px; margin-top: 22px; }
+.reg-guests h3 { font-size: 18px; }
+@media (max-width: 720px) { .ph-form .form-row { grid-template-columns: 1fr; } }
+
 /* ---------- Contenuti dinamici (eventi / Poligono, da data/*.json) ---------- */
 
 .event-panel {

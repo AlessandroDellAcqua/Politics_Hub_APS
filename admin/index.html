@@ -160,8 +160,9 @@ summary{cursor:pointer;font-size:14px;color:var(--blue-deep)}
             <input type="file" id="evImageFile" accept="image/*">
           </div>
         </div>
-        <label>Link per iscriversi (opzionale)</label>
-        <input type="url" id="evRegUrl" placeholder="es. modulo Google / Eventbrite">
+        <label>Link esterno per iscriversi (opzionale)</label>
+        <input type="url" id="evRegUrl" placeholder="lascia vuoto per usare il modulo integrato del sito (iscrizione.html)">
+        <p class="help">Se vuoto e il sito ha i moduli attivi, il bottone "Iscriviti" porta al modulo integrato con biglietti QR. Ricorda di aggiungere la riga dell'evento nella scheda <b>Eventi</b> del Google Sheet (usa l'ID mostrato sopra dopo la pubblicazione).</p>
         <div class="msg" id="evPubMsg"></div>
         <p style="margin-top:18px"><button class="btn btn-primary" id="btnEvPublish">Pubblica evento</button></p>
       </div>
@@ -359,8 +360,10 @@ summary{cursor:pointer;font-size:14px;color:var(--blue-deep)}
     readJSON(EV_PATH).then(function(r){
       var d=r.data||defaultEvents();
       if(d.status==="scheduled"&&d.event){
-        $("evState").innerHTML="✅ Evento pubblicato: <b></b> — "+(d.event.date||"");
+        $("evState").innerHTML="✅ Evento pubblicato: <b></b> — "+(d.event.date||"")+
+          '<br><small>ID evento (per la scheda "Eventi" del Google Sheet): <code></code></small>';
         $("evState").querySelector("b").textContent=d.event.title_it||"";
+        $("evState").querySelector("code").textContent=d.event.id||"";
       }else{
         $("evState").innerHTML="ℹ️ Nessun evento in programma. Prossimo evento stimato: <b>"+fmtMonthIt(d.nextEventMonth)+"</b>";
       }

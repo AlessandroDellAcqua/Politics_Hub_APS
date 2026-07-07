@@ -45,11 +45,14 @@
     <div class="newsletter-box">
       <h3>La newsletter di Politics Hub</h3>
       <p>Eventi, articoli e novità dell'associazione, direttamente nella tua casella di posta.</p>
-      <form action="mailto:info@politicshub.it?subject=Iscrizione%20newsletter%20Politics%20News" method="get">
-        <input type="email" name="email" placeholder="La tua email" required>
+      <form id="ph-newsletter-form" class="ph-form" novalidate>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <input type="email" name="email" placeholder="La tua email" required autocomplete="email">
         <button class="btn btn-primary" type="submit">Iscriviti</button>
+        <label class="check-row"><input type="checkbox" name="consent" required>
+          <span>Accetto i termini e le condizioni della <a href="privacy-newsletter.html" target="_blank">Privacy Policy newsletter</a>. *</span></label>
+        <div class="form-status" aria-live="polite"></div>
       </form>
-      <p class="consent">Inviando la richiesta accetti i termini e le condizioni della <a href="privacy-newsletter.html">Privacy Policy newsletter</a>. Il modulo automatico sarà attivato con il nuovo sistema di iscrizione; nel frattempo la richiesta parte via email.</p>
     </div>
 
     <div class="section-head mt-4">
@@ -133,7 +136,9 @@
     </div>
   </div>
 </footer>
+<script src="../assets/js/config.js"></script>
 <script src="../assets/js/main.js"></script>
 <script src="../assets/js/content.js"></script>
+<script src="../assets/js/forms.js"></script>
 </body>
 </html>
