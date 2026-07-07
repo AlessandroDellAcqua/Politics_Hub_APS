@@ -1,0 +1,61 @@
+{
+  "updated": "2026-07-08T09:00:00Z",
+  "articles": [
+    {
+      "id": "le-nomine-di-trump-2025-01-05",
+      "layout": "cover",
+      "title_it": "Le nomine di Trump: volti noti, polemiche e strategie politiche",
+      "title_en": "Trump's appointments: familiar faces, controversies and political strategies",
+      "date": "2025-01-05",
+      "reading_min": 5,
+      "excerpt_it": "Il nuovo team dell'amministrazione annunciato da Donald Trump ha provocato diverse reazioni sia negli USA che all'estero.",
+      "excerpt_en": "The new administration team announced by Donald Trump has provoked various reactions both in the USA and abroad.",
+      "body_it": "",
+      "body_en": "",
+      "image": "https://static.wixstatic.com/media/d90f5f_6fa807885fe04c6bad4e1d363f077d0f~mv2.png/v1/fill/w_946,h_710,fp_0.50_0.50,q_95,enc_avif,quality_auto/d90f5f_6fa807885fe04c6bad4e1d363f077d0f~mv2.webp",
+      "external_url": "https://www.politicshub.it/post/le-nomine-di-trump-volti-noti-polemiche-e-strategie-politiche"
+    },
+    {
+      "id": "rinascimento-energetico-2024-12-13",
+      "layout": "standard",
+      "title_it": "Rinascimento energetico",
+      "title_en": "Energy renaissance",
+      "date": "2024-12-13",
+      "reading_min": 8,
+      "excerpt_it": "\"Come si fa a non parlare di energia oggi, con tutto quello che sta accadendo?\"",
+      "excerpt_en": "\"How can we not talk about energy today, with everything that is happening?\"",
+      "body_it": "",
+      "body_en": "",
+      "image": "https://static.wixstatic.com/media/d90f5f_4895656208f94c1a8f2551847caf8d69~mv2.jpg/v1/fill/w_946,h_710,fp_0.50_0.50,q_90,enc_avif,quality_auto/d90f5f_4895656208f94c1a8f2551847caf8d69~mv2.webp",
+      "external_url": "https://www.politicshub.it/post/rinascimento-energetico"
+    },
+    {
+      "id": "gpa-e-legge-2024-12-01",
+      "layout": "standard",
+      "title_it": "GPA e Legge: il futuro della Maternità Surrogata tra etica e legislazione",
+      "title_en": "Surrogacy and the Law: the future of surrogate motherhood between ethics and legislation",
+      "date": "2024-12-01",
+      "reading_min": 5,
+      "excerpt_it": "Sentiamo spesso parlare di GPA, ma sappiamo realmente di cosa si tratta?",
+      "excerpt_en": "We often hear about surrogacy, but do we really know what it is?",
+      "body_it": "",
+      "body_en": "",
+      "image": "https://static.wixstatic.com/media/d90f5f_cbb9d4804dd2455db06f83f616670837~mv2.png/v1/fill/w_946,h_710,fp_0.50_0.50,q_95,enc_avif,quality_auto/d90f5f_cbb9d4804dd2455db06f83f616670837~mv2.webp",
+      "external_url": "https://www.politicshub.it/post/gpa-e-legge-il-futuro-della-maternità-surrogata-tra-etica-e-legislazione"
+    },
+    {
+      "id": "le-elezioni-americane-da-amsterdam-2024-11-26",
+      "layout": "standard",
+      "title_it": "Le elezioni americane da Amsterdam",
+      "title_en": "The American elections from Amsterdam",
+      "date": "2024-11-26",
+      "reading_min": 4,
+      "excerpt_it": "Il 5 novembre scorso si sono tenute le elezioni presidenziali negli Stati Uniti. Fin dalle prime ore è apparso evidente che...",
+      "excerpt_en": "On November 5 the presidential elections were held in the United States. From the very first hours it was clear that...",
+      "body_it": "",
+      "body_en": "",
+      "image": "https://static.wixstatic.com/media/d90f5f_46bcbaa7b11a43658072fe4763f4dfc3~mv2.jpg/v1/fill/w_946,h_710,fp_0.50_0.50,q_90,enc_avif,quality_auto/d90f5f_46bcbaa7b11a43658072fe4763f4dfc3~mv2.webp",
+      "external_url": "https://www.politicshub.it/post/le-elezioni-americane-da-amsterdam"
+    }
+  ]
+}

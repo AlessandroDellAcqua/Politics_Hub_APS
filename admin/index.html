@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Politics Hub — Pannello di amministrazione</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 190 200'%3E%3Cpolygon points='95,20 157.5,50.1 173,117.8 129.7,172.1 60.3,172.1 17,117.8 32.5,50.1' fill='%231E6FA8'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B2A45;--ink-deep:#071d31;--blue:#1E6FA8;--blue-deep:#124E7C;--sky:#5CA9DD;--sky-soft:#A9D4F0;
+--paper:#F4F9FD;--paper-2:#EAF3FB;--line:#DBE7F1;--muted:#3d5670;--ok:#1a7f4e;--err:#b3362c;
+--sans:'Inter',system-ui,sans-serif;--serif:'Fraunces',Georgia,serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);font-size:15.5px;line-height:1.6;color:var(--ink);background:var(--paper)}
+h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.15}
+.topbar{background:var(--ink);color:#fff;padding:0 clamp(16px,4vw,40px);height:64px;display:flex;align-items:center;gap:12px}
+.topbar svg{width:24px;height:24px}
+.topbar .t{font-family:var(--serif);font-size:19px}
+.topbar .badge{margin-left:auto;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--sky-soft);border:1px solid rgba(92,169,221,.4);border-radius:40px;padding:5px 14px}
+.wrap{max-width:980px;margin:0 auto;padding:28px clamp(16px,4vw,40px) 80px}
+.panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;margin-bottom:22px}
+.panel h2{font-size:22px;margin-bottom:6px}
+.panel .sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+label{display:block;font-size:13px;font-weight:500;letter-spacing:.4px;color:var(--muted);margin:14px 0 5px}
+input[type=text],input[type=url],input[type=date],input[type=time],input[type=month],input[type=number],input[type=password],textarea,select{
+width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:15px;background:#fff}
+input:focus,textarea:focus{outline:2px solid var(--sky);border-color:var(--sky)}
+textarea{min-height:110px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 18px}
+.btn{display:inline-block;border:0;cursor:pointer;font:inherit;font-size:15px;font-weight:500;padding:12px 26px;border-radius:40px;text-decoration:none;transition:background .2s,transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-deep)}
+.btn-outline{background:#fff;border:1px solid var(--ink);color:var(--ink)}.btn-outline:hover{background:var(--ink);color:#fff}
+.btn-danger{background:#fff;border:1px solid var(--err);color:var(--err)}.btn-danger:hover{background:var(--err);color:#fff}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.btn-sm{padding:7px 16px;font-size:13px}
+.tabs{display:flex;gap:8px;margin:26px 0 18px;flex-wrap:wrap}
+.tab{font:inherit;font-size:15px;padding:10px 22px;border-radius:40px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--muted)}
+.tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hide{display:none!important}
+.msg{padding:12px 16px;border-radius:10px;font-size:14px;margin:14px 0;display:none}
+.msg.show{display:block}
+.msg.ok{background:#e8f6ee;border:1px solid #bfe5cf;color:var(--ok)}
+.msg.err{background:#fdeceb;border:1px solid #f3c3bf;color:var(--err)}
+.msg.info{background:var(--paper-2);border:1px solid var(--line);color:var(--muted)}
+.state{background:var(--paper);border:1px dashed var(--line);border-radius:12px;padding:16px 18px;font-size:14.5px;color:var(--muted);margin-bottom:8px}
+.state b{color:var(--ink)}
+.layouts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:6px}
+.layouts.two{grid-template-columns:repeat(2,1fr)}
+.lay{border:1.5px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;text-align:center;background:#fff}
+.lay input{display:none}
+.lay .pic{height:56px;border-radius:8px;margin-bottom:8px;background:var(--paper-2);position:relative;overflow:hidden}
+.lay .pic::before,.lay .pic::after{content:"";position:absolute;border-radius:4px}
+.lay.l-hero .pic{background:linear-gradient(120deg,#155084,#0B2A45)}
+.lay.l-hero .pic::before{left:8%;top:15%;width:45%;height:70%;background:rgba(92,169,221,.5)}
+.lay.l-hero .pic::after{right:8%;top:30%;width:35%;height:12%;background:rgba(255,255,255,.85)}
+.lay.l-standard .pic::before{left:6%;top:15%;width:40%;height:70%;background:#c9dff0}
+.lay.l-standard .pic::after{right:6%;top:30%;width:42%;height:10%;background:#9fc3de}
+.lay.l-text .pic::before{left:10%;top:24%;width:80%;height:10%;background:#9fc3de}
+.lay.l-text .pic::after{left:10%;top:48%;width:60%;height:8%;background:#c9dff0}
+.lay.l-cover .pic::before{left:6%;top:10%;width:88%;height:52%;background:#c9dff0}
+.lay.l-cover .pic::after{left:6%;top:70%;width:60%;height:10%;background:#9fc3de}
+.lay span{font-size:13px;color:var(--muted)}
+.lay.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(30,111,168,.15)}
+.lay.sel span{color:var(--blue-deep);font-weight:500}
+.art-list{margin-top:10px}
+.art-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+.art-item img{width:64px;height:44px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.art-item .ti{flex:1;font-size:14.5px}
+.art-item .ti small{display:block;color:var(--muted)}
+.pill-first{font-size:11px;letter-spacing:.8px;text-transform:uppercase;background:var(--paper-2);border:1px solid var(--line);color:var(--blue-deep);border-radius:40px;padding:3px 10px}
+.help{font-size:13px;color:var(--muted);margin-top:6px}
+.help a{color:var(--blue-deep)}
+details{margin-top:10px}
+summary{cursor:pointer;font-size:14px;color:var(--blue-deep)}
+.divider{border:0;border-top:1px solid var(--line);margin:22px 0}
+@media(max-width:720px){.row,.row3,.layouts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <svg viewBox="0 0 190 200" aria-hidden="true"><polygon points="95,20 157.5,50.1 173,117.8 129.7,172.1 60.3,172.1 17,117.8 32.5,50.1" fill="#5CA9DD"/></svg>
+  <span class="t">Politics Hub</span>
+  <span class="badge">Pannello admin</span>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ CONFIGURAZIONE / ACCESSO ============ -->
+  <div class="panel" id="cfgPanel">
+    <h2>Accesso</h2>
+    <p class="sub">Il pannello scrive direttamente nel repository GitHub del sito. Serve un <b>token personale</b> (fine-grained) con permesso <i>Contents: Read and write</i> sul solo repository del sito. Il token resta salvato solo su questo computer.</p>
+    <div class="row3">
+      <div><label>Proprietario (utente/organizzazione)</label><input type="text" id="cfgOwner" placeholder="es. politicshub"></div>
+      <div><label>Repository</label><input type="text" id="cfgRepo" placeholder="es. sito"></div>
+      <div><label>Branch</label><input type="text" id="cfgBranch" value="main"></div>
+    </div>
+    <label>Token GitHub</label>
+    <input type="password" id="cfgToken" placeholder="github_pat_…">
+    <p class="help">Come crearlo: GitHub → Settings → Developer settings → Fine-grained tokens → Generate new token → Repository access: solo il repo del sito → Permissions → Contents: <b>Read and write</b>.</p>
+    <div class="msg" id="cfgMsg"></div>
+    <p style="margin-top:16px">
+      <button class="btn btn-primary" id="btnConnect">Salva e connetti</button>
+      <button class="btn btn-outline" id="btnLogout">Dimentica token</button>
+    </p>
+  </div>
+
+  <!-- ============ TABS ============ -->
+  <div id="app" class="hide">
+    <div class="tabs">
+      <button class="tab active" data-tab="evento">📅 Evento</button>
+      <button class="tab" data-tab="articolo">📰 Articoli del Poligono</button>
+    </div>
+
+    <!-- ============ EVENTO ============ -->
+    <div id="tab-evento">
+      <div class="panel">
+        <h2>Stato attuale</h2>
+        <div class="state" id="evState">Caricamento…</div>
+        <div class="msg" id="evMsg"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Pubblica un nuovo evento</h2>
+        <p class="sub">Se c'è già un evento pubblicato, verrà spostato automaticamente nell'archivio interno e sostituito da questo.</p>
+
+        <label>Layout della scheda evento</label>
+        <div class="layouts" id="evLayouts">
+          <label class="lay l-hero sel"><input type="radio" name="evLay" value="hero" checked><div class="pic"></div><span>Locandina grande</span></label>
+          <label class="lay l-standard"><input type="radio" name="evLay" value="standard"><div class="pic"></div><span>Standard</span></label>
+          <label class="lay l-text"><input type="radio" name="evLay" value="text"><div class="pic"></div><span>Solo testo</span></label>
+        </div>
+
+        <div class="row">
+          <div><label>Titolo (italiano) *</label><input type="text" id="evTitleIt"></div>
+          <div><label>Titolo (inglese)</label><input type="text" id="evTitleEn" placeholder="se vuoto, usa l'italiano"></div>
+        </div>
+        <div class="row3">
+          <div><label>Data *</label><input type="date" id="evDate"></div>
+          <div><label>Ora</label><input type="time" id="evTime"></div>
+          <div><label>Posti (opzionale)</label><input type="number" id="evPlaces" min="1" placeholder="es. 100"></div>
+        </div>
+        <label>Luogo</label><input type="text" id="evLocation" placeholder="es. Sala Ratti, Legnano">
+        <div class="row">
+          <div><label>Descrizione (italiano) *</label><textarea id="evDescIt"></textarea></div>
+          <div><label>Descrizione (inglese)</label><textarea id="evDescEn" placeholder="se vuota, usa l'italiano"></textarea></div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Locandina / immagine (URL)</label>
+            <input type="url" id="evImage" placeholder="https://… oppure carica un file →">
+          </div>
+          <div>
+            <label>…oppure carica un file</label>
+            <input type="file" id="evImageFile" accept="image/*">
+          </div>
+        </div>
+        <label>Link per iscriversi (opzionale)</label>
+        <input type="url" id="evRegUrl" placeholder="es. modulo Google / Eventbrite">
+        <div class="msg" id="evPubMsg"></div>
+        <p style="margin-top:18px"><button class="btn btn-primary" id="btnEvPublish">Pubblica evento</button></p>
+      </div>
+
+      <div class="panel">
+        <h2>Rimuovi l'evento corrente</h2>
+        <p class="sub">L'evento passa nell'archivio interno e il sito mostrerà "nessun evento in programma", con l'indicazione del mese stimato del prossimo evento.</p>
+        <label>Mese stimato del prossimo evento</label>
+        <input type="month" id="evNextMonth">
+        <div class="msg" id="evRemMsg"></div>
+        <p style="margin-top:16px">
+          <button class="btn btn-danger" id="btnEvRemove">Rimuovi evento e imposta il mese</button>
+          <button class="btn btn-outline" id="btnEvMonthOnly">Aggiorna solo il mese stimato</button>
+        </p>
+      </div>
+    </div>
+
+    <!-- ============ ARTICOLI ============ -->
+    <div id="tab-articolo" class="hide">
+      <div class="panel">
+        <h2>Nuovo articolo del Poligono</h2>
+        <p class="sub">Il nuovo articolo comparirà per primo nella pagina del Poligono. Quello attualmente in evidenza <b>scenderà automaticamente nell'archivio</b> "Articoli precedenti" — non devi fare nulla.</p>
+
+        <label>Layout dell'articolo in evidenza</label>
+        <div class="layouts two" id="artLayouts">
+          <label class="lay l-standard sel"><input type="radio" name="artLay" value="standard" checked><div class="pic"></div><span>Standard (immagine a fianco)</span></label>
+          <label class="lay l-cover"><input type="radio" name="artLay" value="cover"><div class="pic"></div><span>Copertina grande</span></label>
+        </div>
+
+        <div class="row">
+          <div><label>Titolo (italiano) *</label><input type="text" id="artTitleIt"></div>
+          <div><label>Titolo (inglese)</label><input type="text" id="artTitleEn" placeholder="se vuoto, usa l'italiano"></div>
+        </div>
+        <div class="row">
+          <div><label>Data di pubblicazione *</label><input type="date" id="artDate"></div>
+          <div><label>Minuti di lettura</label><input type="number" id="artMin" min="1" placeholder="es. 5"></div>
+        </div>
+        <div class="row">
+          <div><label>Sommario / anteprima (italiano) *</label><textarea id="artExcIt" style="min-height:70px"></textarea></div>
+          <div><label>Sommario / anteprima (inglese)</label><textarea id="artExcEn" style="min-height:70px" placeholder="se vuoto, usa l'italiano"></textarea></div>
+        </div>
+        <label>Testo dell'articolo (italiano) — separa i paragrafi con una riga vuota</label>
+        <textarea id="artBodyIt" style="min-height:220px"></textarea>
+        <details><summary>Testo in inglese (opzionale)</summary>
+          <textarea id="artBodyEn" style="min-height:180px;margin-top:10px" placeholder="Se vuoto, la pagina inglese mostrerà il testo italiano."></textarea>
+        </details>
+        <div class="row">
+          <div><label>Immagine di copertina (URL)</label><input type="url" id="artImage" placeholder="https://… oppure carica un file →"></div>
+          <div><label>…oppure carica un file</label><input type="file" id="artImageFile" accept="image/*"></div>
+        </div>
+        <div class="msg" id="artMsg"></div>
+        <p style="margin-top:18px"><button class="btn btn-primary" id="btnArtPublish">Pubblica articolo</button></p>
+      </div>
+
+      <div class="panel">
+        <h2>Articoli pubblicati</h2>
+        <p class="sub">Il primo dell'elenco è quello in evidenza. Gli altri compaiono in "Articoli precedenti".</p>
+        <div class="art-list" id="artList">Caricamento…</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var API="https://api.github.com";
+  var cfg=null;
+
+  /* ---------- utilità ---------- */
+  function $(id){return document.getElementById(id);}
+  function msg(id,type,text){var m=$(id);m.className="msg show "+type;m.textContent=text;}
+  function hideMsg(id){$(id).className="msg";}
+  function b64encode(str){
+    var bytes=new TextEncoder().encode(str),bin="";
+    for(var i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);
+    return btoa(bin);
+  }
+  function b64decode(b64){
+    var bin=atob(b64.replace(/\n/g,"")),bytes=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+    return new TextDecoder().decode(bytes);
+  }
+  function slugify(s){
+    return String(s).toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g,"")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,60);
+  }
+  function todayISO(){return new Date().toISOString().slice(0,10);}
+  function fmtMonthIt(ym){
+    if(!ym)return "non impostato";
+    var m=["gennaio","febbraio","marzo","aprile","maggio","giugno","luglio","agosto","settembre","ottobre","novembre","dicembre"];
+    var p=ym.split("-");return m[parseInt(p[1],10)-1]+" "+p[0];
+  }
+
+  /* ---------- API GitHub ---------- */
+  function gh(path,opts){
+    opts=opts||{};
+    opts.headers=Object.assign({
+      "Authorization":"Bearer "+cfg.token,
+      "Accept":"application/vnd.github+json",
+      "X-GitHub-Api-Version":"2022-11-28"
+    },opts.headers||{});
+    return fetch(API+"/repos/"+cfg.owner+"/"+cfg.repo+path,opts).then(function(r){
+      if(r.status===404)return {__missing:true,status:404};
+      if(!r.ok)return r.json().catch(function(){return{};}).then(function(j){
+        throw new Error("GitHub "+r.status+(j.message?": "+j.message:""));
+      });
+      return r.json();
+    });
+  }
+  function readJSON(path){
+    return gh("/contents/"+path+"?ref="+encodeURIComponent(cfg.branch)).then(function(r){
+      if(r.__missing)return {data:null,sha:null};
+      return {data:JSON.parse(b64decode(r.content)),sha:r.sha};
+    });
+  }
+  function writeFile(path,contentB64,message,sha){
+    var body={message:message,content:contentB64,branch:cfg.branch};
+    if(sha)body.sha=sha;
+    return gh("/contents/"+path,{method:"PUT",body:JSON.stringify(body)});
+  }
+  function writeJSON(path,obj,message,sha){
+    obj.updated=new Date().toISOString();
+    return writeFile(path,b64encode(JSON.stringify(obj,null,2)+"\n"),message,sha);
+  }
+  function uploadImage(file){
+    return file.arrayBuffer().then(function(buf){
+      var bytes=new Uint8Array(buf),bin="";
+      for(var i=0;i<bytes.length;i+=8192)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+8192));
+      var name=Date.now()+"-"+slugify(file.name.replace(/\.[^.]+$/,""))+file.name.match(/\.[^.]+$/)[0].toLowerCase();
+      var path="assets/img/uploads/"+name;
+      return writeFile(path,btoa(bin),"admin: carica immagine "+name,null).then(function(){return path;});
+    });
+  }
+  // se è stato scelto un file, caricalo e restituisci il percorso; altrimenti usa l'URL
+  function resolveImage(urlInput,fileInput,msgId){
+    var f=fileInput.files&&fileInput.files[0];
+    if(!f)return Promise.resolve(urlInput.value.trim());
+    msg(msgId,"info","Carico l'immagine…");
+    return uploadImage(f).then(function(p){urlInput.value=p;fileInput.value="";return p;});
+  }
+
+  /* ---------- configurazione ---------- */
+  function loadCfg(){
+    try{cfg=JSON.parse(localStorage.getItem("ph_admin_cfg")||"null");}catch(e){cfg=null;}
+    if(cfg){
+      $("cfgOwner").value=cfg.owner||"";$("cfgRepo").value=cfg.repo||"";
+      $("cfgBranch").value=cfg.branch||"main";$("cfgToken").value=cfg.token||"";
+    }
+  }
+  function connect(){
+    cfg={owner:$("cfgOwner").value.trim(),repo:$("cfgRepo").value.trim(),
+         branch:$("cfgBranch").value.trim()||"main",token:$("cfgToken").value.trim()};
+    if(!cfg.owner||!cfg.repo||!cfg.token){msg("cfgMsg","err","Compila proprietario, repository e token.");return;}
+    msg("cfgMsg","info","Verifico l'accesso…");
+    gh("").then(function(r){
+      if(r.__missing)throw new Error("Repository non trovato (controlla proprietario/nome o i permessi del token).");
+      localStorage.setItem("ph_admin_cfg",JSON.stringify(cfg));
+      msg("cfgMsg","ok","Connesso a "+cfg.owner+"/"+cfg.repo+" ("+cfg.branch+").");
+      $("app").classList.remove("hide");
+      refreshEvent();refreshArticles();
+    }).catch(function(e){msg("cfgMsg","err",e.message);});
+  }
+  $("btnConnect").addEventListener("click",connect);
+  $("btnLogout").addEventListener("click",function(){
+    localStorage.removeItem("ph_admin_cfg");$("cfgToken").value="";
+    $("app").classList.add("hide");msg("cfgMsg","info","Token dimenticato su questo computer.");
+  });
+
+  /* ---------- tabs & layout picker ---------- */
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.addEventListener("click",function(){
+      document.querySelectorAll(".tab").forEach(function(x){x.classList.remove("active");});
+      t.classList.add("active");
+      $("tab-evento").classList.toggle("hide",t.dataset.tab!=="evento");
+      $("tab-articolo").classList.toggle("hide",t.dataset.tab!=="articolo");
+    });
+  });
+  function bindLayouts(boxId){
+    $(boxId).querySelectorAll(".lay").forEach(function(l){
+      l.addEventListener("click",function(){
+        $(boxId).querySelectorAll(".lay").forEach(function(x){x.classList.remove("sel");});
+        l.classList.add("sel");l.querySelector("input").checked=true;
+      });
+    });
+  }
+  bindLayouts("evLayouts");bindLayouts("artLayouts");
+  function layVal(name){return document.querySelector('input[name="'+name+'"]:checked').value;}
+
+  /* ---------- EVENTO ---------- */
+  var EV_PATH="data/events.json";
+  function defaultEvents(){return{status:"none",nextEventMonth:null,event:null,archive:[]};}
+  function refreshEvent(){
+    readJSON(EV_PATH).then(function(r){
+      var d=r.data||defaultEvents();
+      if(d.status==="scheduled"&&d.event){
+        $("evState").innerHTML="✅ Evento pubblicato: <b></b> — "+(d.event.date||"");
+        $("evState").querySelector("b").textContent=d.event.title_it||"";
+      }else{
+        $("evState").innerHTML="ℹ️ Nessun evento in programma. Prossimo evento stimato: <b>"+fmtMonthIt(d.nextEventMonth)+"</b>";
+      }
+      if(d.nextEventMonth)$("evNextMonth").value=d.nextEventMonth;
+    }).catch(function(e){msg("evMsg","err",e.message);});
+  }
+  $("btnEvPublish").addEventListener("click",function(){
+    var titleIt=$("evTitleIt").value.trim(),date=$("evDate").value,descIt=$("evDescIt").value.trim();
+    if(!titleIt||!date||!descIt){msg("evPubMsg","err","Compila almeno titolo (IT), data e descrizione (IT).");return;}
+    $("btnEvPublish").disabled=true;
+    resolveImage($("evImage"),$("evImageFile"),"evPubMsg").then(function(imgPath){
+      return readJSON(EV_PATH).then(function(r){
+        var d=r.data||defaultEvents();
+        if(d.status==="scheduled"&&d.event){d.archive=d.archive||[];d.archive.unshift(d.event);}
+        d.event={
+          id:slugify(titleIt)+"-"+date,
+          layout:layVal("evLay"),
+          title_it:titleIt,title_en:$("evTitleEn").value.trim(),
+          date:date,time:$("evTime").value,
+          location:$("evLocation").value.trim(),
+          description_it:descIt,description_en:$("evDescEn").value.trim(),
+          image:imgPath||"",
+          registration_url:$("evRegUrl").value.trim(),
+          max_places:parseInt($("evPlaces").value,10)||null
+        };
+        d.status="scheduled";d.nextEventMonth=null;
+        return writeJSON(EV_PATH,d,"admin: pubblica evento — "+titleIt,r.sha);
+      });
+    }).then(function(){
+      msg("evPubMsg","ok","Evento pubblicato! Il sito si aggiorna in 1–2 minuti (GitHub Pages).");
+      refreshEvent();
+    }).catch(function(e){msg("evPubMsg","err",e.message);})
+      .finally(function(){$("btnEvPublish").disabled=false;});
+  });
+  $("btnEvRemove").addEventListener("click",function(){
+    var m=$("evNextMonth").value;
+    if(!m){msg("evRemMsg","err","Imposta prima il mese stimato del prossimo evento.");return;}
+    if(!confirm("Rimuovere l'evento corrente dal sito?"))return;
+    $("btnEvRemove").disabled=true;
+    readJSON(EV_PATH).then(function(r){
+      var d=r.data||defaultEvents();
+      if(d.event){d.archive=d.archive||[];d.archive.unshift(d.event);}
+      d.event=null;d.status="none";d.nextEventMonth=m;
+      return writeJSON(EV_PATH,d,"admin: rimuove evento, prossimo stimato "+m,r.sha);
+    }).then(function(){
+      msg("evRemMsg","ok","Fatto: il sito mostrerà \"nessun evento in programma\" (prossimo: "+fmtMonthIt(m)+").");
+      refreshEvent();
+    }).catch(function(e){msg("evRemMsg","err",e.message);})
+      .finally(function(){$("btnEvRemove").disabled=false;});
+  });
+  $("btnEvMonthOnly").addEventListener("click",function(){
+    var m=$("evNextMonth").value;
+    if(!m){msg("evRemMsg","err","Scegli un mese.");return;}
+    readJSON(EV_PATH).then(function(r){
+      var d=r.data||defaultEvents();
+      d.nextEventMonth=m;
+      return writeJSON(EV_PATH,d,"admin: aggiorna mese prossimo evento — "+m,r.sha);
+    }).then(function(){msg("evRemMsg","ok","Mese stimato aggiornato: "+fmtMonthIt(m)+".");refreshEvent();})
+      .catch(function(e){msg("evRemMsg","err",e.message);});
+  });
+
+  /* ---------- ARTICOLI ---------- */
+  var ART_PATH="data/articles.json";
+  function refreshArticles(){
+    readJSON(ART_PATH).then(function(r){
+      var arts=(r.data&&r.data.articles)||[];
+      if(!arts.length){$("artList").textContent="Nessun articolo.";return;}
+      $("artList").innerHTML="";
+      arts.forEach(function(a,i){
+        var div=document.createElement("div");div.className="art-item";
+        var img=a.image?('<img src="'+(/^https?:/.test(a.image)?a.image:"../"+a.image)+'" alt="">'):"";
+        div.innerHTML=img+'<div class="ti"></div>'+(i===0?'<span class="pill-first">In evidenza</span>':"")+
+          '<button class="btn btn-danger btn-sm">Elimina</button>';
+        var ti=div.querySelector(".ti");
+        ti.innerHTML="<b></b><small>"+(a.date||"")+(a.reading_min?" — "+a.reading_min+" min":"")+"</small>";
+        ti.querySelector("b").textContent=a.title_it||a.id;
+        div.querySelector("button").addEventListener("click",function(){deleteArticle(a.id,a.title_it);});
+        $("artList").appendChild(div);
+      });
+    }).catch(function(e){$("artList").textContent="Errore: "+e.message;});
+  }
+  $("btnArtPublish").addEventListener("click",function(){
+    var titleIt=$("artTitleIt").value.trim(),date=$("artDate").value||todayISO(),excIt=$("artExcIt").value.trim();
+    if(!titleIt||!excIt){msg("artMsg","err","Compila almeno titolo (IT) e sommario (IT).");return;}
+    $("btnArtPublish").disabled=true;
+    resolveImage($("artImage"),$("artImageFile"),"artMsg").then(function(imgPath){
+      return readJSON(ART_PATH).then(function(r){
+        var d=r.data||{articles:[]};
+        d.articles.unshift({
+          id:slugify(titleIt)+"-"+date,
+          layout:layVal("artLay"),
+          title_it:titleIt,title_en:$("artTitleEn").value.trim(),
+          date:date,reading_min:parseInt($("artMin").value,10)||null,
+          excerpt_it:excIt,excerpt_en:$("artExcEn").value.trim(),
+          body_it:$("artBodyIt").value.trim(),body_en:$("artBodyEn").value.trim(),
+          image:imgPath||"",external_url:""
+        });
+        return writeJSON(ART_PATH,d,"admin: nuovo articolo — "+titleIt,r.sha);
+      });
+    }).then(function(){
+      msg("artMsg","ok","Articolo pubblicato in evidenza! Il precedente è passato automaticamente nell'archivio. Il sito si aggiorna in 1–2 minuti.");
+      ["artTitleIt","artTitleEn","artExcIt","artExcEn","artBodyIt","artBodyEn","artImage","artMin"].forEach(function(id){$(id).value="";});
+      refreshArticles();
+    }).catch(function(e){msg("artMsg","err",e.message);})
+      .finally(function(){$("btnArtPublish").disabled=false;});
+  });
+  function deleteArticle(id,title){
+    if(!confirm('Eliminare definitivamente l\'articolo "'+(title||id)+'"?'))return;
+    readJSON(ART_PATH).then(function(r){
+      var d=r.data||{articles:[]};
+      d.articles=d.articles.filter(function(a){return a.id!==id;});
+      return writeJSON(ART_PATH,d,"admin: elimina articolo — "+id,r.sha);
+    }).then(refreshArticles)
+      .catch(function(e){alert("Errore: "+e.message);});
+  }
+
+  /* ---------- avvio ---------- */
+  $("artDate").value=todayISO();
+  loadCfg();
+  if(cfg&&cfg.token)connect();
+})();
+</script>
+</body>
+</html>
