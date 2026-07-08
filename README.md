@@ -103,7 +103,17 @@ cognome ciascuno) con un'unica email; capienza controllata in modo atomico; news
 Setup completo in **docs/SETUP-MODULI.md**. Dopo il deploy, incolla l'URL dell'app web in
 `assets/js/config.js` — finché è vuoto i moduli mostrano il fallback via email.
 
+## App di check-in (cartella locale `App/`, fuori dal repository)
+
+Le due app dei volontari (Android e iPhone) sono sviluppate nella cartella `App/`
+del progetto locale ("Politics Hub APS - Nonprofit website/website/App"), fuori da questo
+repository. Stesso backend del sito (Apps Script + Sheet, PIN in `CHECKIN_PIN`): selezione
+evento, scansione QR, ricerca per nome/email/codice, lista partecipanti A–Z con bordo
+acceso = da far entrare / attenuato = già entrato; check-in atomico lato server. Guide:
+`App/app-checkin/README-APP.md` (Android/Capacitor, Play Store) e `App/app-ios/README-IOS.md`
+(SwiftUI nativa, App Store). Consiglio: quando inizierete a modificarle, createvi un
+repository dedicato (es. `politicshub-app`) per non perderne la cronologia.
+
 ## Prossimi passi (vedi politics_hub_zero_cost_architecture.md)
 
-- Fase 5: app di check-in iOS/Android (il QR contiene già un codice firmato, verificabile con `verifyQrId`)
 - Fase 6: biglietti Apple Wallet

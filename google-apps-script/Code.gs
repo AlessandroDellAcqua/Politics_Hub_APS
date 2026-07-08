@@ -22,7 +22,7 @@
 var TABS = {
   mailing: { name: 'MailingList', headers: ['timestamp', 'email', 'consenso', 'fonte', 'stato'] },
   events: { name: 'Eventi', headers: ['event_id', 'titolo', 'data', 'ora', 'luogo', 'max_posti', 'iscrizioni_aperte'] },
-  regs: { name: 'Registrazioni', headers: ['registration_id', 'event_id', 'qr_id', 'biglietto_n', 'nome', 'cognome', 'email', 'registrato_il', 'email_inviata', 'inviata_il', 'checkin', 'checkin_il'] },
+  regs: { name: 'Registrazioni', headers: ['registration_id', 'event_id', 'qr_id', 'biglietto_n', 'nome', 'cognome', 'email', 'registrato_il', 'email_inviata', 'inviata_il', 'checkin', 'checkin_il', 'checkin_da'] },
   log: { name: 'Log', headers: ['timestamp', 'tipo', 'messaggio'] }
 };
 var MAX_TICKETS = 2;
@@ -57,6 +57,11 @@ function ensureSecret_() {
   if (!props.getProperty('QR_SECRET')) {
     props.setProperty('QR_SECRET', Utilities.getUuid() + Utilities.getUuid());
   }
+  if (!props.getProperty('CHECKIN_PIN')) {
+    props.setProperty('CHECKIN_PIN', String(Math.floor(100000 + Math.random() * 900000)));
+  }
+  Logger.log('PIN check-in (da inserire nell\'app dei volontari): ' + props.getProperty('CHECKIN_PIN') +
+    ' — modificabile in Impostazioni progetto → Proprietà dello script.');
 }
 
 function ensureTrigger_() {
@@ -80,6 +85,13 @@ function doPost(e) {
     if (p.website) return json_({ status: 'ok' }); // honeypot anti-spam: fingiamo successo
     if (p.action === 'newsletter') return handleNewsletter_(p);
     if (p.action === 'event') return handleEvent_(p);
+    // ---- azioni riservate all'app di check-in (richiedono PIN) ----
+    if (p.action === 'checkin_events' || p.action === 'checkin_list' || p.action === 'checkin') {
+      if (!validPin_(p.pin)) return json_({ status: 'unauthorized' });
+      if (p.action === 'checkin_events') return handleCheckinEvents_();
+      if (p.action === 'checkin_list') return handleCheckinList_(p);
+      return handleCheckin_(p);
+    }
     return json_({ status: 'invalid', message: 'azione sconosciuta' });
   } catch (err) {
     log_('errore', String(err && err.stack || err));
@@ -158,7 +170,7 @@ function handleEvent_(p) {
     guests.forEach(function (g, idx) {
       regsSh.appendRow([
         regId, eventId, makeQrId_(), idx + 1, g.nome, g.cognome,
-        email, now, 'FALSE', '', 'da_verificare', ''
+        email, now, 'FALSE', '', 'da_verificare', '', ''
       ]);
     });
     return json_({ status: 'ok', tickets: guests.length });
@@ -286,6 +298,107 @@ function sendPendingTickets() {
         log_('invio', regId + ': ' + err);
       }
     });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/* ============================== CHECK-IN (app volontari) ============================== */
+
+function validPin_(pin) {
+  var real = PropertiesService.getScriptProperties().getProperty('CHECKIN_PIN') || '';
+  return real !== '' && String(pin || '') === real;
+}
+
+/** Elenco eventi con conteggi, per il selettore dell'app. */
+function handleCheckinEvents_() {
+  var ss = SpreadsheetApp.getActive();
+  var evSh = ss.getSheetByName(TABS.events.name);
+  var events = [];
+  if (evSh.getLastRow() > 1) {
+    var rows = evSh.getRange(2, 1, evSh.getLastRow() - 1, 7).getValues();
+    var counts = countByEvent_();
+    rows.forEach(function (r) {
+      var id = String(r[0]).trim();
+      if (!id) return;
+      events.push({
+        id: id, title: String(r[1]), date: fmtDate_(r[2]), time: String(r[3] || ''),
+        location: String(r[4] || ''), max: parseInt(r[5], 10) || 0,
+        open: String(r[6]).toUpperCase() === 'TRUE' || r[6] === true,
+        total: (counts[id] || {}).total || 0,
+        entered: (counts[id] || {}).entered || 0
+      });
+    });
+  }
+  return json_({ status: 'ok', events: events.reverse() }); // più recenti prima
+}
+
+function countByEvent_() {
+  var sh = SpreadsheetApp.getActive().getSheetByName(TABS.regs.name);
+  var out = {};
+  if (sh.getLastRow() < 2) return out;
+  sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues().forEach(function (r) {
+    var id = String(r[1]);
+    if (String(r[10]) === 'annullato') return;
+    out[id] = out[id] || { total: 0, entered: 0 };
+    out[id].total++;
+    if (String(r[10]) === 'entrato') out[id].entered++;
+  });
+  return out;
+}
+
+/** Lista partecipanti di un evento, per elenco/ricerca nell'app. */
+function handleCheckinList_(p) {
+  var eventId = String(p.event_id || '').trim();
+  if (!eventId) return json_({ status: 'invalid', field: 'event_id' });
+  var sh = SpreadsheetApp.getActive().getSheetByName(TABS.regs.name);
+  var list = [];
+  if (sh.getLastRow() > 1) {
+    sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues().forEach(function (r) {
+      if (String(r[1]) !== eventId || String(r[10]) === 'annullato') return;
+      list.push({
+        qr: String(r[2]), nome: String(r[4]), cognome: String(r[5]), email: String(r[6]),
+        entrato: String(r[10]) === 'entrato',
+        alle: r[11] ? Utilities.formatDate(new Date(r[11]), 'Europe/Rome', 'HH:mm') : '',
+        da: String(r[12] || '')
+      });
+    });
+  }
+  var entered = list.filter(function (x) { return x.entrato; }).length;
+  return json_({ status: 'ok', list: list, total: list.length, entered: entered });
+}
+
+/** Check-in atomico di un biglietto (da scansione QR o manuale). */
+function handleCheckin_(p) {
+  var qr = String(p.qr || '').trim();
+  if (!qr) return json_({ status: 'invalid', field: 'qr' });
+  if (!verifyQrId(qr)) return json_({ status: 'not_found' }); // firma non valida = biglietto falso/typo
+
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var sh = SpreadsheetApp.getActive().getSheetByName(TABS.regs.name);
+    if (sh.getLastRow() < 2) return json_({ status: 'not_found' });
+    var rows = sh.getRange(2, 1, sh.getLastRow() - 1, 13).getValues();
+    for (var i = 0; i < rows.length; i++) {
+      if (String(rows[i][2]) !== qr) continue;
+      var who = { nome: String(rows[i][4]), cognome: String(rows[i][5]) };
+      if (String(rows[i][10]) === 'annullato') return json_({ status: 'cancelled', guest: who });
+      if (String(rows[i][10]) === 'entrato') {
+        return json_({
+          status: 'already', guest: who,
+          alle: rows[i][11] ? Utilities.formatDate(new Date(rows[i][11]), 'Europe/Rome', 'HH:mm') : '',
+          da: String(rows[i][12] || '')
+        });
+      }
+      var row = i + 2;
+      sh.getRange(row, 11).setValue('entrato');
+      sh.getRange(row, 12).setValue(new Date());
+      sh.getRange(row, 13).setValue(String(p.operator || '').slice(0, 40));
+      var counts = countByEvent_()[String(rows[i][1])] || {};
+      return json_({ status: 'ok', guest: who, entered: counts.entered || 0, total: counts.total || 0 });
+    }
+    return json_({ status: 'not_found' });
   } finally {
     lock.releaseLock();
   }
