@@ -92,6 +92,14 @@ function doPost(e) {
       if (p.action === 'checkin_list') return handleCheckinList_(p);
       return handleCheckin_(p);
     }
+    // ---- moduli app volontari: gestione eventi, drive, rubrica, statistiche (PIN) ----
+    if (p.action === 'admin_event' || p.action === 'drive_tree' || p.action === 'directory' || p.action === 'stats') {
+      if (!validPin_(p.pin)) return json_({ status: 'unauthorized' });
+      if (p.action === 'admin_event') return handleAdminEvent_(p);
+      if (p.action === 'drive_tree') return handleDriveTree_();
+      if (p.action === 'directory') return handleDirectory_();
+      return handleStats_();
+    }
     return json_({ status: 'invalid', message: 'azione sconosciuta' });
   } catch (err) {
     log_('errore', String(err && err.stack || err));
@@ -120,7 +128,28 @@ function handleNewsletter_(p) {
     }
   }
   sh.appendRow([new Date(), email, 'TRUE', p.source || 'sito', 'attivo']);
+  sendWelcomeEmail_(email, String(p.lang || 'it').slice(0, 2) === 'en'); // conferma immediata
   return json_({ status: 'ok' });
+}
+
+/** Email di benvenuto newsletter (best-effort: se fallisce, l'iscrizione resta comunque valida). */
+function sendWelcomeEmail_(email, en) {
+  try {
+    var subject = en ? 'Welcome to Politics News' : 'Benvenuta/o in Politics News';
+    var body = en
+      ? '<p style="font-family:Arial,sans-serif;font-size:14px;margin:20px 4px">Your subscription to the Politics Hub newsletter is confirmed. You\'ll receive updates on our events, projects and articles — no party politics, only ideas.</p>' +
+        '<p style="font-family:Arial,sans-serif;font-size:12px;color:#3d5670;margin:18px 4px">To unsubscribe, just reply to this email.<br>Privacy: https://www.politicshub.it/en/privacy-newsletter.html</p>'
+      : '<p style="font-family:Arial,sans-serif;font-size:14px;margin:20px 4px">La tua iscrizione alla newsletter di Politics Hub è confermata. Riceverai aggiornamenti su eventi, progetti e articoli — nessuna logica di partito, solo idee.</p>' +
+        '<p style="font-family:Arial,sans-serif;font-size:12px;color:#3d5670;margin:18px 4px">Per disiscriverti basta rispondere a questa email.<br>Privacy: https://www.politicshub.it/it/privacy-newsletter.html</p>';
+    var html =
+      '<div style="font-family:Georgia,serif;max-width:560px;margin:0 auto;color:#0B2A45">' +
+      '<div style="background:#0B2A45;color:#fff;border-radius:14px;padding:26px;text-align:center">' +
+      '<div style="font-size:13px;letter-spacing:2px;color:#A9D4F0">POLITICS HUB APS</div>' +
+      '<h2 style="margin:10px 0 0;font-weight:500">Politics News</h2></div>' + body + '</div>';
+    MailApp.sendEmail({ to: email, subject: subject, htmlBody: html, name: EMAIL_SENDER_NAME });
+  } catch (err) {
+    log_('newsletter', email + ': ' + err); // es. quota email esaurita: iscrizione salvata comunque
+  }
 }
 
 /* ============================== ISCRIZIONE EVENTO ============================== */
@@ -402,6 +431,159 @@ function handleCheckin_(p) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/* ============================== MODULI APP VOLONTARI ==============================
+ *
+ * GESTIONE EVENTI (admin_event): crea/aggiorna la riga nella scheda Eventi
+ *   e apre/chiude le iscrizioni direttamente dall'app (niente più passo manuale).
+ *
+ * DRIVE (drive_tree): restituisce l'albero del Drive dell'associazione.
+ *   Configurazione (una volta): Apps Script → ⚙️ Impostazioni progetto →
+ *   Proprietà dello script → aggiungi DRIVE_ROOT_ID = ID della cartella radice
+ *   (dall'URL della cartella: drive.google.com/drive/folders/QUESTO_ID).
+ *   NB: la prima volta lo script chiederà una nuova autorizzazione (accesso Drive):
+ *   dopo aver incollato il codice, esegui una volta `setup` dall'editor.
+ *
+ * RUBRICA e LINK UTILI (directory): letti dalle schede Rubrica e LinkUtili del
+ *   foglio (create automaticamente al primo uso). Compilale direttamente nel foglio.
+ *
+ * STATISTICHE (stats): iscritti newsletter per mese + iscritti/entrati per evento.
+ */
+
+var EXTRA_TABS = {
+  rubrica: { name: 'Rubrica', headers: ['nome', 'ruolo', 'email', 'telefono', 'gruppo'] },
+  link: { name: 'LinkUtili', headers: ['titolo', 'url', 'gruppo'] }
+};
+
+function extraSheet_(key) {
+  var ss = SpreadsheetApp.getActive();
+  var t = EXTRA_TABS[key];
+  var sh = ss.getSheetByName(t.name);
+  if (!sh) {
+    sh = ss.insertSheet(t.name);
+    sh.getRange(1, 1, 1, t.headers.length).setValues([t.headers]);
+    sh.setFrozenRows(1);
+  }
+  return sh;
+}
+
+/** Crea/aggiorna una riga della scheda Eventi (op=upsert) o apre/chiude le iscrizioni (op=toggle). */
+function handleAdminEvent_(p) {
+  var id = String(p.event_id || '').trim();
+  if (!id) return json_({ status: 'invalid', field: 'event_id' });
+  var sh = SpreadsheetApp.getActive().getSheetByName(TABS.events.name);
+  var lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    var rowIdx = 0, last = sh.getLastRow();
+    if (last > 1) {
+      var ids = sh.getRange(2, 1, last - 1, 1).getValues();
+      for (var i = 0; i < ids.length; i++) {
+        if (String(ids[i][0]).trim() === id) { rowIdx = i + 2; break; }
+      }
+    }
+    if (p.op === 'toggle') {
+      if (!rowIdx) return json_({ status: 'not_found' });
+      sh.getRange(rowIdx, 7).setValue(p.aperte === '1' ? 'TRUE' : 'FALSE');
+      log_('admin', 'iscrizioni ' + (p.aperte === '1' ? 'aperte' : 'chiuse') + ' per ' + id);
+      return json_({ status: 'ok' });
+    }
+    var vals = [id, String(p.titolo || ''), String(p.data || ''), String(p.ora || ''),
+      String(p.luogo || ''), parseInt(p.max_posti, 10) || 0, p.aperte === '1' ? 'TRUE' : 'FALSE'];
+    if (rowIdx) sh.getRange(rowIdx, 1, 1, 7).setValues([vals]);
+    else sh.appendRow(vals);
+    log_('admin', (rowIdx ? 'aggiornato' : 'creato') + ' evento ' + id);
+    return json_({ status: 'ok' });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+/** Albero del Drive (cartelle + file, solo nomi e ID: i contenuti restano su Drive). */
+function handleDriveTree_() {
+  var rootId = PropertiesService.getScriptProperties().getProperty('DRIVE_ROOT_ID');
+  if (!rootId) return json_({ status: 'no_root' });
+  var root;
+  try { root = DriveApp.getFolderById(rootId); }
+  catch (e) { return json_({ status: 'bad_root' }); }
+  var budget = { n: 0, max: 4000 }; // limite di sicurezza per i tempi di Apps Script
+  var tree = folderNode_(root, 0, budget);
+  return json_({ status: 'ok', updated: new Date().toISOString(), truncated: budget.n >= budget.max, tree: tree });
+}
+
+function folderNode_(folder, depth, budget) {
+  var node = { id: folder.getId(), name: folder.getName(), type: 'folder', children: [] };
+  if (depth >= 8 || budget.n >= budget.max) return node;
+  var fs = folder.getFolders();
+  while (fs.hasNext() && budget.n < budget.max) {
+    budget.n++;
+    node.children.push(folderNode_(fs.next(), depth + 1, budget));
+  }
+  var files = folder.getFiles();
+  while (files.hasNext() && budget.n < budget.max) {
+    budget.n++;
+    var f = files.next();
+    node.children.push({ id: f.getId(), name: f.getName(), type: 'file', mime: f.getMimeType() });
+  }
+  node.children.sort(function (a, b) {
+    if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+    return a.name.localeCompare(b.name);
+  });
+  return node;
+}
+
+/** Rubrica associati + link utili (schede Rubrica e LinkUtili del foglio). */
+function handleDirectory_() {
+  var rSh = extraSheet_('rubrica'), lSh = extraSheet_('link');
+  var people = [], links = [];
+  if (rSh.getLastRow() > 1) {
+    rSh.getRange(2, 1, rSh.getLastRow() - 1, 5).getValues().forEach(function (r) {
+      if (!String(r[0]).trim()) return;
+      people.push({ nome: String(r[0]), ruolo: String(r[1] || ''), email: String(r[2] || ''),
+        telefono: String(r[3] || ''), gruppo: String(r[4] || '') });
+    });
+  }
+  if (lSh.getLastRow() > 1) {
+    lSh.getRange(2, 1, lSh.getLastRow() - 1, 3).getValues().forEach(function (r) {
+      if (!String(r[1]).trim()) return;
+      links.push({ titolo: String(r[0] || r[1]), url: String(r[1]), gruppo: String(r[2] || '') });
+    });
+  }
+  return json_({ status: 'ok', people: people, links: links });
+}
+
+/** Statistiche: newsletter per mese (ultimi 12) + iscritti/entrati per evento. */
+function handleStats_() {
+  var ss = SpreadsheetApp.getActive();
+  var mSh = ss.getSheetByName(TABS.mailing.name);
+  var total = 0, byMonth = {};
+  if (mSh && mSh.getLastRow() > 1) {
+    mSh.getRange(2, 1, mSh.getLastRow() - 1, 1).getValues().forEach(function (r) {
+      if (Object.prototype.toString.call(r[0]) !== '[object Date]') return;
+      total++;
+      var k = Utilities.formatDate(r[0], 'Europe/Rome', 'yyyy-MM');
+      byMonth[k] = (byMonth[k] || 0) + 1;
+    });
+  }
+  var months = [], now = new Date();
+  for (var i = 11; i >= 0; i--) {
+    var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    var k2 = Utilities.formatDate(d, 'Europe/Rome', 'yyyy-MM');
+    months.push({ mese: k2, iscritti: byMonth[k2] || 0 });
+  }
+  var counts = countByEvent_();
+  var evSh = ss.getSheetByName(TABS.events.name);
+  var events = [];
+  if (evSh && evSh.getLastRow() > 1) {
+    evSh.getRange(2, 1, evSh.getLastRow() - 1, 7).getValues().forEach(function (r) {
+      var id = String(r[0]).trim();
+      if (!id) return;
+      events.push({ id: id, titolo: String(r[1] || ''), data: fmtDate_(r[2]),
+        iscritti: (counts[id] || {}).total || 0, entrati: (counts[id] || {}).entered || 0 });
+    });
+  }
+  return json_({ status: 'ok', newsletterTotale: total, newsletterMesi: months, eventi: events.reverse() });
 }
 
 /* ============================== UTILITÀ ============================== */

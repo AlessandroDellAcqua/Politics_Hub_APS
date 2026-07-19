@@ -63,6 +63,46 @@ non possono causare overbooking. Ogni email può iscriversi una sola volta per e
 Il QR contiene un codice tipo `PH26-K7Q9-M2LA.3F8A21BC` (casuale + firmato): sarà verificato
 dall'app di check-in (Fase 5) con la funzione `verifyQrId` già inclusa.
 
+
+## ⚠️ Quando modifichi Code.gs: serve un nuovo deploy
+
+Incollare il nuovo codice **non basta**: l'URL /exec continua a servire la versione vecchia.
+Ogni volta che aggiorni Code.gs:
+
+1. Incolla il codice e salva.
+2. Esegui una volta `setup` (autorizza i nuovi permessi se richiesti, es. Drive).
+3. **Deploy → Gestisci implementazioni → ✏️ Modifica → Versione: "Nuova versione" → Implementa.**
+   L'URL resta lo stesso: non serve toccare config.js.
+
+Senza il passo 3 succedono cose come "l'email di benvenuto non arriva": il codice nuovo
+esiste ma online gira ancora quello vecchio.
+
+## Aprire le iscrizioni di un evento (flusso consigliato)
+
+Usa la scheda **Gestione** dell'app volontari: "Pubblica sito + apri iscrizioni" fa tutto
+in un tocco (pubblica su GitHub **e** crea/apre la riga nella scheda Eventi con lo stesso id).
+Se un evento risulta "iscrizioni non aperte" sul sito, apri Gestione: il pannello di stato
+dice esattamente se manca la riga nel foglio o se è solo chiusa, con il bottone per sistemare.
+
+## Drive nell'app (DRIVE_ROOT_ID)
+
+1. Apri su Drive la cartella radice dell'archivio (es. "Politics Hub Drive").
+2. Copia l'ID dall'URL: drive.google.com/drive/folders/**QUESTO_ID**.
+3. Apps Script → ⚙️ Impostazioni progetto → Proprietà dello script → aggiungi
+   `DRIVE_ROOT_ID` = quell'ID → salva → esegui una volta `setup` (autorizza Drive) → nuovo deploy.
+L'app scarica la STRUTTURA (solo nomi), la salva sul telefono per navigare all'istante,
+e apre i file su Drive solo quando li tocchi.
+
+## Rubrica e link utili (Home dell'app)
+
+Nel foglio compaiono (al primo uso) le schede **Rubrica** (nome, ruolo, email, telefono,
+gruppo) e **LinkUtili** (titolo, url, gruppo): compilale e appariranno nella Home dell'app.
+
+## Email di benvenuto newsletter
+
+Alla prima iscrizione di un'email viene inviata subito una conferma di benvenuto
+(se l'invio fallisce, l'iscrizione resta comunque salvata; vedi scheda Log).
+
 ## Note
 
 - **Privacy/GDPR**: si salvano solo email (newsletter) e nome, cognome, email (eventi), con consenso
