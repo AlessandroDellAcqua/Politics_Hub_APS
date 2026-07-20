@@ -1,6 +1,20 @@
 {
   "archive" : [
     {
+      "date" : "2026-10-22",
+      "description_en" : "",
+      "description_it" : "Questa è una prova per testare il sito",
+      "id" : "prova2-2026-10-22",
+      "image" : "",
+      "layout" : "text",
+      "location" : "Legnano",
+      "max_places" : 1,
+      "registration_url" : "",
+      "time" : "21.30",
+      "title_en" : "",
+      "title_it" : "Prova2"
+    },
+    {
       "date" : "2026-07-24",
       "description_en" : "",
       "description_it" : "ifnewop",
@@ -16,20 +30,20 @@
     }
   ],
   "event" : {
-    "date" : "2026-10-22",
+    "date" : "2026-11-18",
     "description_en" : "",
-    "description_it" : "Questa è una prova per testare il sito",
-    "id" : "prova2-2026-10-22",
+    "description_it" : "\n\nEvento",
+    "id" : "prova-3-2026-11-18",
     "image" : "",
     "layout" : "text",
-    "location" : "Legnano",
-    "max_places" : 1,
+    "location" : "Castello di Legnano",
+    "max_places" : 2,
     "registration_url" : "",
-    "time" : "21.30",
-    "title_en" : "",
-    "title_it" : "Prova2"
+    "time" : "21.10",
+    "title_en" : "test 3",
+    "title_it" : "Prova 3"
   },
   "nextEventMonth" : null,
   "status" : "scheduled",
-  "updated" : "2026-07-20T08:05:47Z"
+  "updated" : "2026-07-20T08:17:02Z"
 }
