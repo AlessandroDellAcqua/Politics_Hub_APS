@@ -1,20 +1,35 @@
 {
-  "updated": "2026-07-18T18:20:44.434Z",
-  "status": "scheduled",
-  "nextEventMonth": null,
-  "event": {
-    "id": "noenpoemfee-2026-07-24",
-    "layout": "text",
-    "title_it": "NOENPOemfèe",
-    "title_en": "kjwnfeinfwpo",
-    "date": "2026-07-24",
-    "time": "",
-    "location": "Legnano, MI",
-    "description_it": "ifnewop",
-    "description_en": "",
-    "image": "",
-    "registration_url": "",
-    "max_places": 10
+  "archive" : [
+    {
+      "date" : "2026-07-24",
+      "description_en" : "",
+      "description_it" : "ifnewop",
+      "id" : "noenpoemfee-2026-07-24",
+      "image" : "",
+      "layout" : "text",
+      "location" : "Legnano, MI",
+      "max_places" : 10,
+      "registration_url" : "",
+      "time" : "",
+      "title_en" : "kjwnfeinfwpo",
+      "title_it" : "NOENPOemfèe"
+    }
+  ],
+  "event" : {
+    "date" : "2026-10-22",
+    "description_en" : "",
+    "description_it" : "Questa è una prova per testare il sito",
+    "id" : "prova2-2026-10-22",
+    "image" : "",
+    "layout" : "text",
+    "location" : "Legnano",
+    "max_places" : 1,
+    "registration_url" : "",
+    "time" : "21.30",
+    "title_en" : "",
+    "title_it" : "Prova2"
   },
-  "archive": []
+  "nextEventMonth" : null,
+  "status" : "scheduled",
+  "updated" : "2026-07-20T08:05:47Z"
 }
