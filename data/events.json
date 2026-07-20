@@ -1,6 +1,20 @@
 {
   "archive" : [
     {
+      "date" : "2026-11-18",
+      "description_en" : "",
+      "description_it" : "\n\nEvento",
+      "id" : "prova-3-2026-11-18",
+      "image" : "",
+      "layout" : "text",
+      "location" : "Castello di Legnano",
+      "max_places" : 2,
+      "registration_url" : "",
+      "time" : "21.10",
+      "title_en" : "test 3",
+      "title_it" : "Prova 3"
+    },
+    {
       "date" : "2026-10-22",
       "description_en" : "",
       "description_it" : "Questa è una prova per testare il sito",
@@ -30,20 +44,20 @@
     }
   ],
   "event" : {
-    "date" : "2026-11-18",
+    "date" : "2026-12-18",
     "description_en" : "",
-    "description_it" : "\n\nEvento",
-    "id" : "prova-3-2026-11-18",
-    "image" : "",
-    "layout" : "text",
+    "description_it" : "l\n",
+    "id" : "prova4-2026-12-18",
+    "image" : "https:\/\/www.google.com\/url?sa=t&source=web&rct=j&url=https%3A%2F%2Fit.linkedin.com%2Fcompany%2Fpoliticshub&ved=0CBYQjRxqGAoTCIivzJfQ4ZUDFQAAAAAdAAAAABCdAQ&opi=89978449",
+    "layout" : "hero",
     "location" : "Castello di Legnano",
-    "max_places" : 2,
+    "max_places" : 10,
     "registration_url" : "",
-    "time" : "21.10",
-    "title_en" : "test 3",
-    "title_it" : "Prova 3"
+    "time" : "22",
+    "title_en" : "test 4",
+    "title_it" : "Prova4"
   },
   "nextEventMonth" : null,
   "status" : "scheduled",
-  "updated" : "2026-07-20T08:17:02Z"
+  "updated" : "2026-07-20T16:01:26Z"
 }
